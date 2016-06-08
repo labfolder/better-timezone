@@ -18,6 +18,7 @@
     var defaults = {
       showIANA: false,
       showOptgroups: false,
+      defaultTimeZone: ""
     };
     var data = {
       "Hawaiian Standard Time": [
@@ -2529,13 +2530,6 @@
       ],
       "Eastern Standard Time": [
         {
-          "iana": "America/New_York",
-          "abbrs": [
-            "EST",
-            "EDT"
-          ]
-        },
-        {
           "iana": "America/Detroit",
           "abbrs": [
             "EST",
@@ -2838,40 +2832,44 @@
         //   });
         // });
         $(self.element).select2({
-          placeholder: 'Please select a timezone',
+          placeholder: function() { return getTemplateText("timeZone"); },
           width: 'style'
         });
 
-        // prefill
-        var abbr = new Date().toTimeString().match(/\((.+)\)/)[1];
-        if (abbr === 'PST' || abbr === 'PDT' || abbr === 'Pacific Daylight Time' || abbr === 'Pacific Standard Time') {
-          $(self.element).val('America/Los_Angeles').trigger('change');
-        } else if (abbr === 'EST' || abbr === 'EDT' || abbr === 'Eastern Standard Time' || abbr === 'Eastern Daylight Time') {
-          $(self.element).val('America/New_York').trigger('change');
-        } else if (abbr === 'MST' || abbr === 'MDT' || abbr === 'Mountain Standard Time' || abbr === 'Mountain Daylight Time') {
-          $(self.element).val('America/Denver').trigger('change');
-        } else if (abbr === 'CST' || abbr === 'CDT' || abbr === 'Central Standard Time' || abbr === 'Central Daylight Time') {
-          $(self.element).val('America/Chicago').trigger('change');
+        if (this.settings.defaultTimeZone !== "") {
+          $(self.element).val(this.settings.defaultTimeZone).trigger('change');
         } else {
-          // look for a match
-          var done;
-          for (var key in self.data) {
-            if (!done) {
-              for (var i = 0; i < self.data[key].length; i++) {
-                var iana = self.data[key][i].iana;
-                if (self.data[key][i].abbrs.indexOf(abbr) !== -1) {
-                  $(self.element).val(iana).trigger('change');
-                  done = true;
-                  break;
-                }
-              }
-            } else {
-              break;
-            }
-          }
-          if (!done) {
-            // default to PST
+          // prefill
+          var abbr = new Date().toTimeString().match(/\((.+)\)/)[1];
+          if (abbr === 'PST' || abbr === 'PDT' || abbr === 'Pacific Daylight Time' || abbr === 'Pacific Standard Time') {
             $(self.element).val('America/Los_Angeles').trigger('change');
+          } else if (abbr === 'EST' || abbr === 'EDT' || abbr === 'Eastern Standard Time' || abbr === 'Eastern Daylight Time') {
+            $(self.element).val('America/New_York').trigger('change');
+          } else if (abbr === 'MST' || abbr === 'MDT' || abbr === 'Mountain Standard Time' || abbr === 'Mountain Daylight Time') {
+            $(self.element).val('America/Denver').trigger('change');
+          } else if (abbr === 'CST' || abbr === 'CDT' || abbr === 'Central Standard Time' || abbr === 'Central Daylight Time') {
+            $(self.element).val('America/Chicago').trigger('change');
+          } else {
+            // look for a match
+            var done;
+            for (var key in self.data) {
+              if (!done) {
+                for (var i = 0; i < self.data[key].length; i++) {
+                  var iana = self.data[key][i].iana;
+                  if (self.data[key][i].abbrs.indexOf(abbr) !== -1) {
+                    $(self.element).val(iana).trigger('change');
+                    done = true;
+                    break;
+                  }
+                }
+              } else {
+                break;
+              }
+            }
+            if (!done) {
+              // default to PST
+              $(self.element).val('Europe/Berlin').trigger('change');
+            }
           }
         }
       },
