@@ -18,6 +18,7 @@
     var defaults = {
       showIANA: false,
       showOptgroups: false,
+      selectedTimeZone: "",
     };
     var data = {
       "Hawaiian Standard Time": [
@@ -2529,13 +2530,6 @@
       ],
       "Eastern Standard Time": [
         {
-          "iana": "America/New_York",
-          "abbrs": [
-            "EST",
-            "EDT"
-          ]
-        },
-        {
           "iana": "America/Detroit",
           "abbrs": [
             "EST",
@@ -2873,6 +2867,9 @@
             // default to PST
             $(self.element).val('America/Los_Angeles').trigger('change');
           }
+        }
+        if (this.settings.selectedTimeZone !== "") {
+          $(self.element).val(this.settings.selectedTimeZone).trigger('change');
         }
       },
       match: function (term, text, opt) {
